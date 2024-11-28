@@ -16,13 +16,23 @@ const ShoppingListPage = () => {
     Bebidas: require("../../assets/img/agua.png"),
   };
 
-  const removeProduct = (id: string) => {
-    setProducts(products.filter((product) => product.id !== id));
+  const toggleProductStatus = (id: string) => {
+    setProducts(
+      products.map((product) =>
+        product.id === id ? { ...product, inCart: !product.inCart } : product
+      )
+    );
   };
+
+  const totalPrice = products.reduce(
+    (acc, product) => acc + (product.inCart ? product.price * product.quantity : 0),
+    0
+  );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Lista de la Compra</Text>
+      <Text>Precio total: {totalPrice} €</Text>
       <FlatList
         data={products}
         keyExtractor={(item) => item.id}
@@ -32,8 +42,8 @@ const ShoppingListPage = () => {
             <Text>{item.name}</Text>
             <Text>Cantidad: {item.quantity}</Text>
             <Text>Precio: {item.price} €</Text>
-            <TouchableOpacity onPress={() => removeProduct(item.id)} style={styles.removeButton}>
-              <Text>Eliminar</Text>
+            <TouchableOpacity onPress={() => toggleProductStatus(item.id)} style={styles.toggleButton}>
+              <Text>{item.inCart ? "Marcado como obtenido" : "Pendiente"}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -64,8 +74,8 @@ const styles = StyleSheet.create({
     height: 40,
     marginRight: 10,
   },
-  removeButton: {
-    backgroundColor: "#ff0000",
+  toggleButton: {
+    backgroundColor: "#00ff00",
     padding: 8,
     borderRadius: 5,
     marginLeft: 10,
