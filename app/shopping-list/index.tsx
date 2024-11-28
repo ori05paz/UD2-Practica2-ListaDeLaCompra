@@ -14,6 +14,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
 import { theme } from "../../styles/Colors";
+import { Link } from "expo-router";
 import 'react-native-get-random-values';
 
 
@@ -137,7 +138,17 @@ const ShoppingList = () => {
         { backgroundColor: currentTheme.background },
       ]}
     >
+
       <View style={styles.headerBar}>
+        <TouchableOpacity>
+          <Link href="/" style={styles.backButton}>
+            <MaterialCommunityIcons
+              name="rocket"
+              size={24}
+              color={currentTheme.text}
+            />
+          </Link>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setIsDarkTheme(!isDarkTheme)}>
           <Entypo name="star" size={24} color={currentTheme.text} />
@@ -288,8 +299,6 @@ const ShoppingList = () => {
     </View>
   );
 };
-
-export default ShoppingList;
 
 const styles = StyleSheet.create({
   container: { 
