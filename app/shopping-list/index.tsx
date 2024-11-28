@@ -1,18 +1,37 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image, FlatList } from "react-native";
 import { theme } from "../../styles/Colors";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+
+
+const sampleProducts = [
+  { id: uuidv4(), name: "Pan", category: "Panadería", price: 1.2, quantity: 1, inCart: false },
+  { id: uuidv4(), name: "Agua", category: "Bebidas", price: 0.8, quantity: 1, inCart: false },
+];
 
 const ShoppingListPage = () => {
-  const priceTotal = 0; 
-  const products = []; 
+  const [products, setProducts] = useState(sampleProducts);
+
+  const categoryImages = {
+    Panaderia: require("../../assets/img/pan.png"),
+    Bebidas: require("../../assets/img/agua.png"),
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Lista de la Compra</Text>
-      {products.length === 0 ? (
-        <Text style={styles.emptyMessage}>Lista vacía</Text>
-      ) : (
-        <Text style={styles.price}>Precio total: {priceTotal} €</Text>
-      )}
+      <FlatList
+        data={products}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.productItem}>
+            <Image source={categoryImages[item.category]} style={styles.categoryImage} />
+            <Text>{item.name}</Text>
+            <Text>Cantidad: {item.quantity}</Text>
+            <Text>Precio: {item.price} €</Text>
+          </View>
+        )}
+      />
     </View>
   );
 };
@@ -29,14 +48,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  emptyMessage: {
-    fontSize: 18,
-    color: "gray",
+  productItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
   },
-  price: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 20,
+  categoryImage: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
   },
 });
 
