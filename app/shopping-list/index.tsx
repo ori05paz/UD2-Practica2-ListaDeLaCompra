@@ -1,85 +1,67 @@
-import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from "react-native";
-import { theme } from "../../styles/Colors";
+import { Modal, Text, TextInput, View, Button, StyleSheet } from "react-native";
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
-const sampleProducts = [
-  { id: uuidv4(), name: "Pan", category: "Panadería", price: 1.2, quantity: 1, inCart: false },
-  { id: uuidv4(), name: "Agua", category: "Bebidas", price: 0.8, quantity: 1, inCart: false },
-];
+const AddProductModal = ({ visible, onClose, onSave }) => {
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [price, setPrice] = useState("");
 
-const ShoppingListPage = () => {
-  const [products, setProducts] = useState(sampleProducts);
-
-  const categoryImages = {
-    Panadería: require("../../assets/img/pan.png"),
-    Bebidas: require("../../assets/img/agua.png"),
+  const handleSave = () => {
+    if (name && category && quantity && price) {
+      onSave({ name, category, quantity: parseInt(quantity), price: parseFloat(price) });
+      onClose();
+    } else {
+      alert("Por favor, complete todos los campos.");
+    }
   };
-
-  const toggleProductStatus = (id: string) => {
-    setProducts(
-      products.map((product) =>
-        product.id === id ? { ...product, inCart: !product.inCart } : product
-      )
-    );
-  };
-
-  const totalPrice = products.reduce(
-    (acc, product) => acc + (product.inCart ? product.price * product.quantity : 0),
-    0
-  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Lista de la Compra</Text>
-      <Text>Precio total: {totalPrice} €</Text>
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.productItem}>
-            <Image source={categoryImages[item.category]} style={styles.categoryImage} />
-            <Text>{item.name}</Text>
-            <Text>Cantidad: {item.quantity}</Text>
-            <Text>Precio: {item.price} €</Text>
-            <TouchableOpacity onPress={() => toggleProductStatus(item.id)} style={styles.toggleButton}>
-              <Text>{item.inCart ? "Marcado como obtenido" : "Pendiente"}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-    </View>
+    <Modal visible={visible} onRequestClose={onClose}>
+      <View style={styles.container}>
+        <Text>Agregar Producto</Text>
+        <TextInput
+          placeholder="Nombre"
+          value={name}
+          onChangeText={setName}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Categoría"
+          value={category}
+          onChangeText={setCategory}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Cantidad"
+          value={quantity}
+          onChangeText={setQuantity}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Precio por unidad"
+          value={price}
+          onChangeText={setPrice}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+        <Button title="Guardar" onPress={handleSave} />
+        <Button title="Cerrar" onPress={onClose} />
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
+    padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  productItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  categoryImage: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
-  },
-  toggleButton: {
-    backgroundColor: "#00ff00",
+  input: {
+    borderBottomWidth: 1,
+    marginBottom: 10,
     padding: 8,
-    borderRadius: 5,
-    marginLeft: 10,
   },
 });
 
-export default ShoppingListPage;
+export default AddProductModal;
