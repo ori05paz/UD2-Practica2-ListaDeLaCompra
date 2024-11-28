@@ -1,8 +1,7 @@
-import { StyleSheet, Text, View, Image, FlatList } from "react-native";
+import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from "react-native";
 import { theme } from "../../styles/Colors";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-
 
 const sampleProducts = [
   { id: uuidv4(), name: "Pan", category: "Panadería", price: 1.2, quantity: 1, inCart: false },
@@ -13,8 +12,12 @@ const ShoppingListPage = () => {
   const [products, setProducts] = useState(sampleProducts);
 
   const categoryImages = {
-    Panaderia: require("../../assets/img/pan.png"),
+    Panadería: require("../../assets/img/pan.png"),
     Bebidas: require("../../assets/img/agua.png"),
+  };
+
+  const removeProduct = (id: string) => {
+    setProducts(products.filter((product) => product.id !== id));
   };
 
   return (
@@ -29,6 +32,9 @@ const ShoppingListPage = () => {
             <Text>{item.name}</Text>
             <Text>Cantidad: {item.quantity}</Text>
             <Text>Precio: {item.price} €</Text>
+            <TouchableOpacity onPress={() => removeProduct(item.id)} style={styles.removeButton}>
+              <Text>Eliminar</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -57,6 +63,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     marginRight: 10,
+  },
+  removeButton: {
+    backgroundColor: "#ff0000",
+    padding: 8,
+    borderRadius: 5,
+    marginLeft: 10,
   },
 });
 
